@@ -22,46 +22,41 @@ public class ClientExample {
         System.out.println("Connecting to server on port 9999....");
         List<String> companies = new ArrayList<String>();
         companies.add("Google");
-        companies.add("IBM");
-        companies.add("Facebook");
         companies.add("Crunchy");
-//
-//        System.out.println("Sending message");
-//        for(String company: companies){
-//            byte[] message = company.getBytes();
-//            ByteBuffer buffer = ByteBuffer.wrap(message);
-//            socketChannel.write(buffer);
-//            buffer.clear();
-//            System.out.println("Sent: "+company);
-//            Thread.sleep(2000);
-//        }
         SelectionKey selectionKey = socketChannel.register(selector, SelectionKey.OP_WRITE);
-        while (true) {
+        int i = 0;
+        boolean flag = true;
+        while (flag) {
             selector.select();
             Set<SelectionKey> keys = selector.selectedKeys();
             Iterator<SelectionKey> iterator = keys.iterator();
             while (iterator.hasNext()) {
                 SelectionKey key = iterator.next();
                 if (key.isWritable()) {
-                    for (String company : companies) {
-                        byte[] message = company.getBytes();
-                        ByteBuffer buffer = ByteBuffer.wrap(message);
-                        socketChannel.write(buffer);
-                        buffer.clear();
-                        System.out.println("Sent: " + company);
-                        Thread.sleep(2000);
-                    }
-                    socketChannel.register(selector,SelectionKey.OP_READ);
+                    String company = companies.get(i);
+                    byte[] message = company.getBytes();
+                    ByteBuffer buffer = ByteBuffer.wrap(message);
+                    socketChannel.write(buffer);
+                    buffer.clear();
+                    System.out.println("Sent: " + company);
+                    i++;
+                    socketChannel.register(selector, SelectionKey.OP_READ);
                 }
-                if(key.isReadable()){
+                if (key.isReadable()) {
                     ByteBuffer buffer = ByteBuffer.allocate(256);
-                    SocketChannel readSocketChannel = (SocketChannel) key.channel();
-                    readSocketChannel.read(buffer);
+                    socketChannel.read(buffer);
                     String result = new String(buffer.array()).trim();
-                    System.out.println("Message received from server: "+result);
+                    System.out.println("Message received from server: " + result);
+                    if (result.equals("Crunchy")) {
+                        System.out.println("Closed");
+                        flag = false;
+                        socketChannel.close();
+                    } else{
+                        socketChannel.register(selector,SelectionKey.OP_WRITE);
+                    }
                 }
             }
+            iterator.remove();
         }
-//        socketChannel.close();
     }
 }

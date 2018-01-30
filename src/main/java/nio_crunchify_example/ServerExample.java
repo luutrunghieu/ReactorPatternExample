@@ -35,20 +35,29 @@ public class ServerExample {
                     socketChannel.configureBlocking(false);
                     socketChannel.register(selector, SelectionKey.OP_READ);
                     System.out.println("Connection Accepted: " + socketChannel.getLocalAddress() + "\n");
-                } else if (key.isReadable()) {
+                }
+                if (key.isReadable()) {
                     SocketChannel socketChannel = (SocketChannel) key.channel();
                     ByteBuffer buffer = ByteBuffer.allocate(256);
                     socketChannel.read(buffer);
                     String result = new String(buffer.array()).trim();
                     System.out.println("Message received: " + result);
                     socketChannel.register(selector, SelectionKey.OP_WRITE, buffer);
-                } else if (key.isWritable()) {
+                }
+                if (key.isWritable()) {
                     SocketChannel socketChannel = (SocketChannel) key.channel();
                     StringBuilder builder = new StringBuilder();
                     ByteBuffer buffer = (ByteBuffer) key.attachment();
+                    buffer.flip();
                     socketChannel.write(buffer);
-                } else{
-
+                    String response = new String(buffer.array()).trim();
+                    System.out.println("Write to client: "+response);
+                    if(response.equals("Crunchy")){
+                        System.out.println("Closed");
+                        socketChannel.close();
+                    } else{
+                        socketChannel.register(selector,SelectionKey.OP_READ);
+                    }
                 }
             }
             iterator.remove();
