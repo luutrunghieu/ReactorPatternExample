@@ -1,4 +1,4 @@
-package reactor_jeewanthad;
+package reactor_jeewanthad.server;
 
 import java.net.InetSocketAddress;
 import java.nio.channels.SelectionKey;
@@ -27,7 +27,7 @@ public class Reactor implements Runnable {
     }
 
     public void run() {
-        System.out.println("Server listening on port " + serverSocketChannel.socket().getInetAddress());
+        System.out.println("Server listening on port " + serverSocketChannel.socket().getLocalPort());
         try {
             while (true) {
                 selector.select();
@@ -66,5 +66,10 @@ public class Reactor implements Runnable {
                 e.printStackTrace();
             }
         }
+    }
+
+    public static void main(String[] args) throws Exception{
+        Reactor reactor = new Reactor(9999,false);
+        new Thread(reactor).start();
     }
 }
