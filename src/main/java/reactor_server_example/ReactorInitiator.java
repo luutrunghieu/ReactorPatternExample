@@ -1,3 +1,5 @@
+package reactor_server_example;
+
 import java.net.InetSocketAddress;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.ServerSocketChannel;
@@ -6,7 +8,7 @@ import java.nio.channels.ServerSocketChannel;
  * Created by imdb on 29/01/2018.
  */
 public class ReactorInitiator {
-    private static final int NIO_SERVER_PORT = 9993;
+    private static final int NIO_SERVER_PORT = 9999;
     public void initiateServer(int port) throws Exception{
         ServerSocketChannel server = ServerSocketChannel.open();
         server.socket().bind(new InetSocketAddress("localhost",port));
