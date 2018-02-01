@@ -1,11 +1,10 @@
-package reactor_jeewanthad.client;
+package reactor_jeewanthad.test;
 
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class ClientHandler implements Runnable {
@@ -13,17 +12,14 @@ public class ClientHandler implements Runnable {
     int state = WRITING;
     SelectionKey key;
     SocketChannel socketChannel;
-    MonitorThread monitorThread;
 
-    ClientHandler(SelectionKey key, MonitorThread monitorThread) {
+    ClientHandler(SelectionKey key) {
         this.key = key;
         socketChannel = (SocketChannel) key.channel();
         key.attach(this);
-        this.monitorThread = monitorThread;
     }
 
     public void run() {
-        System.out.println("Client handler thread: " + Thread.currentThread().getName());
         try {
             if (state == WRITING) {
                 write();
@@ -33,7 +29,7 @@ public class ClientHandler implements Runnable {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        System.out.println("Done handler thread: " + Thread.currentThread().getName());
+
     }
 
     void read() throws Exception {
@@ -42,26 +38,25 @@ public class ClientHandler implements Runnable {
         String result = new String(buffer.array()).trim();
 //        System.out.println("Message received from server: " + result);
         key.interestOps(SelectionKey.OP_WRITE);
-        monitorThread.getReceiveCount().incrementAndGet();
         state = WRITING;
     }
 
     void write() throws Exception {
-//        List<String> listName = new ArrayList();
-//        listName.add("Hieu");
-//        listName.add("An");
-//        listName.add("Bye");
+        List<String> listName = new ArrayList();
+        listName.add("Hieu");
+        listName.add("An");
+        listName.add("Bye");
         String message = "Hello";
-//        int rand = ThreadLocalRandom.current().nextInt(0, 2 + 1);
+        int rand = ThreadLocalRandom.current().nextInt(0, 2 + 1);
+        message = listName.get(rand);
         ByteBuffer buffer = ByteBuffer.wrap(message.getBytes());
         socketChannel.write(buffer);
-//        System.out.println("Sent: "+listName.get(rand));
+        System.out.println("Sent: "+listName.get(rand));
         if(message.equalsIgnoreCase("Bye")){
             socketChannel.close();
         } else{
             key.interestOps(SelectionKey.OP_READ);
             state = READING;
         }
-        monitorThread.getSendCount().incrementAndGet();
     }
 }

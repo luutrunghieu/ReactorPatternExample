@@ -1,10 +1,9 @@
-package reactor_jeewanthad.server;
+package reactor_jeewanthad.test;
 
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
-import java.util.concurrent.Executors;
 
 /**
  * Created by imdb on 31/01/2018.
@@ -38,15 +37,9 @@ public class Handler implements Runnable {
     }
 
     void read() throws Exception {
-
         int readCount = socketChannel.read(input);
         if (readCount > 0) {
             readProcess(readCount);
-        }
-        try {
-            Thread.sleep(1000);
-        } catch (Exception ex) {
-            ex.printStackTrace();
         }
         state = WRITING;
         selectionKey.interestOps(SelectionKey.OP_WRITE);
