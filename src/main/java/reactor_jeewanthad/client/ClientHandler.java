@@ -13,11 +13,13 @@ public class ClientHandler implements Runnable {
     int state = WRITING;
     SelectionKey key;
     SocketChannel socketChannel;
+    MonitorThread monitorThread;
 
-    ClientHandler(SelectionKey key) {
+    ClientHandler(SelectionKey key, MonitorThread monitorThread) {
         this.key = key;
         socketChannel = (SocketChannel) key.channel();
         key.attach(this);
+        this.monitorThread = monitorThread;
     }
 
     public void run() {
@@ -37,25 +39,28 @@ public class ClientHandler implements Runnable {
         ByteBuffer buffer = ByteBuffer.allocate(256);
         socketChannel.read(buffer);
         String result = new String(buffer.array()).trim();
-        System.out.println("Message received from server: " + result);
+//        System.out.println("Message received from server: " + result);
         key.interestOps(SelectionKey.OP_WRITE);
+        monitorThread.getReceiveCount().incrementAndGet();
         state = WRITING;
     }
 
     void write() throws Exception {
-        List<String> listName = new ArrayList();
-        listName.add("Hieu");
-        listName.add("An");
-        listName.add("Bye");
+//        List<String> listName = new ArrayList();
+//        listName.add("Hieu");
+//        listName.add("An");
+//        listName.add("Bye");
+        String message = "Hello";
         int rand = ThreadLocalRandom.current().nextInt(0, 2 + 1);
-        ByteBuffer buffer = ByteBuffer.wrap(listName.get(rand).getBytes());
+        ByteBuffer buffer = ByteBuffer.wrap(message.getBytes());
         socketChannel.write(buffer);
-        System.out.println("Sent: "+listName.get(rand));
-        if(listName.get(rand).equalsIgnoreCase("Bye")){
+//        System.out.println("Sent: "+listName.get(rand));
+        if(message.equalsIgnoreCase("Bye")){
             socketChannel.close();
         } else{
             key.interestOps(SelectionKey.OP_READ);
             state = READING;
         }
+        monitorThread.getSendCount().incrementAndGet();
     }
 }

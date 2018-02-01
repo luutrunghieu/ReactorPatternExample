@@ -69,7 +69,7 @@ public class Reactor implements Runnable {
     }
 
     public static void main(String[] args) throws Exception{
-        Reactor reactor = new Reactor(9999,false);
+        Reactor reactor = new Reactor(9999,true);
         new Thread(reactor).start();
     }
 }

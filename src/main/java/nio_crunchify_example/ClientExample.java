@@ -42,7 +42,7 @@ public class ClientExample {
                     i++;
                     socketChannel.register(selector, SelectionKey.OP_READ);
                 }
-                if (key.isReadable()) {
+                else if (key.isReadable()) {
                     ByteBuffer buffer = ByteBuffer.allocate(256);
                     socketChannel.read(buffer);
                     String result = new String(buffer.array()).trim();

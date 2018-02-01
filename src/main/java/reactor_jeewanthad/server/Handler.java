@@ -60,7 +60,7 @@ public class Handler implements Runnable {
         if (clientName.equalsIgnoreCase("Bye")) {
             socketChannel.close();
         } else {
-            System.out.println("Saying hello to " + clientName);
+//            System.out.println("Saying hello to " + clientName);
             ByteBuffer output = ByteBuffer.wrap(("Hello " + clientName + "\n").getBytes());
             socketChannel.write(output);
             selectionKey.interestOps(SelectionKey.OP_READ);

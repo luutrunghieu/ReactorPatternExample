@@ -23,14 +23,11 @@ public class HandlerWithThreadPool extends Handler {
             state = PROCESSING;
             pool.execute(new Processer(readCount));
         }
-        //We are interested in writing back to the client soon after read processing is done.
         selectionKey.interestOps(SelectionKey.OP_WRITE);
     }
 
-    //Start processing in a new Processer Thread and Hand off to the reactor thread.
     synchronized void processAndHandOff(int readCount) {
         readProcess(readCount);
-        //Read processing done. Now the server is ready to send a message to the client.
         state = WRITING;
     }
 

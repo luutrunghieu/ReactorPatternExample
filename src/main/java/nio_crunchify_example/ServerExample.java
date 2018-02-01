@@ -41,7 +41,7 @@ public class ServerExample {
 //                    System.out.println("Connection Accepted: " + socketChannel.getLocalAddress() + "\n");
                     executorService.submit(new AcceptEventHandler(key));
                 }
-                if (key.isReadable()) {
+                else if (key.isReadable()) {
 //                    SocketChannel socketChannel = (SocketChannel) key.channel();
 //                    ByteBuffer buffer = ByteBuffer.allocate(256);
 //                    socketChannel.read(buffer);
@@ -50,7 +50,7 @@ public class ServerExample {
 //                    socketChannel.register(selector, SelectionKey.OP_WRITE, buffer);
                     executorService.submit(new ReadEventHandler(key));
                 }
-                if (key.isWritable()) {
+                else if (key.isWritable()) {
 //                    SocketChannel socketChannel = (SocketChannel) key.channel();
 //                    ByteBuffer buffer = (ByteBuffer) key.attachment();
 //                    buffer.flip();
