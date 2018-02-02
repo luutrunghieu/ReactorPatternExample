@@ -61,6 +61,7 @@ public class Handler implements Runnable {
         sb.append(new String(subStringBytes));
         input.clear();
         clientName = sb.toString().trim();
+        System.out.println("Message received from client: "+clientName);
     }
 
     void write() throws Exception {
@@ -68,10 +69,11 @@ public class Handler implements Runnable {
             socketChannel.close();
         } else {
 //            System.out.println("Saying hello to " + clientName);
-            ByteBuffer output = ByteBuffer.wrap(("Hello " + clientName + "\n").getBytes());
+            ByteBuffer output = ByteBuffer.wrap((clientName + "\n").getBytes());
             socketChannel.write(output);
             selectionKey.interestOps(SelectionKey.OP_READ);
             state = READING;
+            System.out.println("Sent: "+clientName);
         }
 
     }

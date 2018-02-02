@@ -22,6 +22,7 @@ public class ReadEventHandler implements Callable {
         ByteBuffer buffer = ByteBuffer.allocate(256);
         socketChannel.read(buffer);
         String result = new String(buffer.array()).trim();
+        System.out.println("Message received from server: "+result);
         return result;
     }
 }
